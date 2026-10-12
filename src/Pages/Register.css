@@ -1,0 +1,2560 @@
+
+/* ============================================================
+   GLOBAL
+============================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: hidden;
+
+    font-family:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+
+/* ============================================================
+   MAIN PAGE
+============================================================ */
+
+.parking-page {
+
+    width: 100%;
+    height: 100vh;
+
+    min-height: 100vh;
+
+    position: relative;
+
+    overflow: hidden;
+
+    transition:
+        background 0.5s ease,
+        color 0.5s ease;
+}
+
+
+/* ============================================================
+   DARK THEME
+============================================================ */
+
+.parking-page.dark {
+
+    background:
+
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(0, 198, 255, 0.13),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(91, 66, 255, 0.13),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #050811,
+            #0a1020,
+            #060a13
+        );
+
+    color: white;
+}
+
+
+/* ============================================================
+   LIGHT THEME
+============================================================ */
+
+.parking-page.light {
+
+    background:
+
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(0, 160, 255, 0.15),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(100, 80, 255, 0.10),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #edf6ff,
+            #f7faff
+        );
+
+    color: #111827;
+}
+
+
+/* ============================================================
+   BACKGROUND
+============================================================ */
+
+.parking-background {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* ============================================================
+   PARKING FLOOR
+============================================================ */
+
+.parking-floor {
+
+    position: absolute;
+
+    width: 130%;
+
+    height: 300px;
+
+    left: -15%;
+
+    bottom: -50px;
+
+    transform:
+        rotate(-5deg);
+
+    background:
+
+        repeating-linear-gradient(
+            90deg,
+
+            transparent 0px,
+
+            transparent 125px,
+
+            rgba(255,255,255,0.035) 126px,
+
+            rgba(255,255,255,0.035) 128px
+        ),
+
+        linear-gradient(
+            rgba(255,255,255,0.015),
+            rgba(255,255,255,0.045)
+        );
+
+    border-top:
+        1px solid
+        rgba(255,255,255,0.06);
+}
+
+
+/* ============================================================
+   PARKING SLOTS
+============================================================ */
+
+.parking-slot {
+
+    position: absolute;
+
+    width: 130px;
+
+    height: 225px;
+
+    bottom: -10px;
+
+    border-left:
+        2px solid
+        rgba(255,255,255,0.10);
+
+    border-right:
+        2px solid
+        rgba(255,255,255,0.10);
+
+    opacity: 0.75;
+}
+
+
+.parking-slot::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 2px;
+
+    background:
+        rgba(255,255,255,0.09);
+}
+
+
+.parking-slot span {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 18px;
+
+    transform:
+        translateX(-50%);
+
+    font-size: 9px;
+
+    color:
+        rgba(255,255,255,0.20);
+}
+
+
+/* ============================================================
+   SLOT POSITIONS
+============================================================ */
+
+.slot-1 {
+
+    left: 2%;
+
+    transform:
+        rotate(5deg);
+}
+
+
+.slot-2 {
+
+    left: 19%;
+
+    transform:
+        rotate(5deg);
+}
+
+
+.slot-3 {
+
+    left: 66%;
+
+    transform:
+        rotate(5deg);
+}
+
+
+.slot-4 {
+
+    left: 83%;
+
+    transform:
+        rotate(5deg);
+}
+
+
+.slot-5 {
+
+    left: 43%;
+
+    transform:
+        rotate(5deg);
+}
+
+
+/* ============================================================
+   PARKED VEHICLES
+============================================================ */
+
+.parked-car {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 52px;
+
+    transform:
+        translateX(-50%)
+        rotate(90deg);
+
+    font-size:
+        clamp(35px, 4vw, 52px);
+
+    filter:
+        blur(0.2px);
+}
+
+
+/* ============================================================
+   PARKED VEHICLE VISIBILITY
+============================================================ */
+
+.blue-car {
+    opacity: 0.22;
+}
+
+.white-car {
+    opacity: 0.13;
+}
+
+.green-car {
+    opacity: 0.17;
+}
+
+.red-car {
+    opacity: 0.14;
+}
+
+.purple-car {
+    opacity: 0.18;
+}
+
+
+/* ============================================================
+   MOVING VEHICLES
+============================================================ */
+
+.moving-car {
+
+    position: absolute;
+
+    font-size:
+        clamp(25px, 3vw, 40px);
+
+    opacity: 0.18;
+
+    z-index: 2;
+
+    will-change:
+        transform;
+}
+
+
+/* ============================================================
+   LEFT → RIGHT VEHICLES
+============================================================ */
+
+.moving-car-1 {
+
+    top: 16%;
+
+    left: -100px;
+
+    animation:
+        driveRight
+        17s
+        linear
+        infinite;
+}
+
+
+.moving-car-3 {
+
+    top: 58%;
+
+    left: -100px;
+
+    animation:
+        driveRight
+        19s
+        linear
+        infinite;
+
+    animation-delay:
+        7s;
+}
+
+
+.moving-car-5 {
+
+    top: 64%;
+
+    left: -100px;
+
+    animation:
+        driveRight
+        15s
+        linear
+        infinite;
+}
+
+
+.moving-car-7 {
+
+    top: 43%;
+
+    left: -100px;
+
+    animation:
+        driveRight
+        19s
+        linear
+        infinite;
+
+    animation-delay:
+        6s;
+}
+
+
+/* ============================================================
+   RIGHT → LEFT VEHICLES
+============================================================ */
+
+.moving-car-2 {
+
+    top: 36%;
+
+    right: -100px;
+
+    left: auto;
+
+    animation:
+        driveLeft
+        21s
+        linear
+        infinite;
+
+    animation-delay:
+        4s;
+}
+
+
+.moving-car-4 {
+
+    top: 75%;
+
+    right: -100px;
+
+    left: auto;
+
+    animation:
+        driveLeft
+        24s
+        linear
+        infinite;
+
+    animation-delay:
+        10s;
+}
+
+
+.moving-car-6 {
+
+    top: 84%;
+
+    right: -100px;
+
+    left: auto;
+
+    animation:
+        driveLeft
+        21s
+        linear
+        infinite;
+
+    animation-delay:
+        9s;
+}
+
+
+.moving-car-8 {
+
+    top: 13%;
+
+    right: -100px;
+
+    left: auto;
+
+    animation:
+        driveLeft
+        24s
+        linear
+        infinite;
+
+    animation-delay:
+        11s;
+}
+
+
+/* ============================================================
+   LEFT → RIGHT ANIMATION
+============================================================ */
+
+@keyframes driveRight {
+
+    0% {
+
+        transform:
+            translateX(-120px)
+            translateY(0)
+            scale(0.8);
+    }
+
+    20% {
+
+        transform:
+            translateX(20vw)
+            translateY(-8px)
+            scale(0.9);
+    }
+
+    40% {
+
+        transform:
+            translateX(40vw)
+            translateY(7px)
+            scale(1);
+    }
+
+    60% {
+
+        transform:
+            translateX(60vw)
+            translateY(-8px)
+            scale(0.95);
+    }
+
+    80% {
+
+        transform:
+            translateX(80vw)
+            translateY(5px)
+            scale(0.9);
+    }
+
+    100% {
+
+        transform:
+            translateX(120vw)
+            translateY(0)
+            scale(0.8);
+    }
+}
+
+
+/* ============================================================
+   RIGHT → LEFT ANIMATION
+============================================================ */
+
+@keyframes driveLeft {
+
+    0% {
+
+        transform:
+            translateX(120px)
+            translateY(0)
+            scale(0.8);
+    }
+
+    20% {
+
+        transform:
+            translateX(-20vw)
+            translateY(8px)
+            scale(0.9);
+    }
+
+    40% {
+
+        transform:
+            translateX(-40vw)
+            translateY(-7px)
+            scale(1);
+    }
+
+    60% {
+
+        transform:
+            translateX(-60vw)
+            translateY(8px)
+            scale(0.95);
+    }
+
+    80% {
+
+        transform:
+            translateX(-80vw)
+            translateY(-5px)
+            scale(0.9);
+    }
+
+    100% {
+
+        transform:
+            translateX(-120vw)
+            translateY(0)
+            scale(0.8);
+    }
+}
+
+
+/* ============================================================
+   FLOATING VEHICLES
+============================================================ */
+
+.floating-car {
+
+    position: absolute;
+
+    font-size:
+        clamp(22px, 2.5vw, 32px);
+
+    opacity: 0.09;
+
+    animation:
+        floatingVehicle
+        7s
+        ease-in-out
+        infinite;
+
+    z-index: 1;
+}
+
+
+.floating-1 {
+
+    top: 22%;
+
+    left: 12%;
+}
+
+
+.floating-2 {
+
+    top: 70%;
+
+    left: 85%;
+
+    animation-delay:
+        2s;
+}
+
+
+.floating-3 {
+
+    top: 12%;
+
+    left: 72%;
+
+    animation-delay:
+        4s;
+}
+
+
+/* ============================================================
+   FLOATING ANIMATION
+============================================================ */
+
+@keyframes floatingVehicle {
+
+    0%,
+    100% {
+
+        transform:
+            translateY(0)
+            rotate(-3deg);
+    }
+
+    50% {
+
+        transform:
+            translateY(-15px)
+            rotate(3deg);
+    }
+}
+
+
+/* ============================================================
+   BACKGROUND LIGHTS
+============================================================ */
+
+.background-light {
+
+    position: absolute;
+
+    width: 250px;
+
+    height: 250px;
+
+    border-radius: 50%;
+
+    filter:
+        blur(100px);
+
+    opacity: 0.12;
+}
+
+
+.light-one {
+
+    top: -100px;
+
+    left: 20%;
+
+    background:
+        #00c6ff;
+}
+
+
+.light-two {
+
+    bottom: -120px;
+
+    right: 20%;
+
+    background:
+        #6c4cff;
+}
+
+
+.light-three {
+
+    top: 40%;
+
+    right: -100px;
+
+    background:
+        #00b7ff;
+}
+
+
+/* ============================================================
+   NAVBAR
+============================================================ */
+
+.parking-navbar {
+
+    position: relative;
+
+    z-index: 20;
+
+    width: 100%;
+
+    height: 72px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 4vw;
+}
+
+
+/* ============================================================
+   LOGO
+============================================================ */
+
+.parking-logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+/* ============================================================
+   PARKING LOGO BOX
+============================================================ */
+
+.parking-logo-slot {
+
+    position: relative;
+
+    width: 48px;
+
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #00c6ff,
+            #0072ff
+        );
+
+    box-shadow:
+
+        0 8px 25px
+        rgba(0,150,255,0.35);
+}
+
+
+/* ============================================================
+   LOGO PARKING LINES
+============================================================ */
+
+.logo-parking-line {
+
+    position: absolute;
+
+    width: 34px;
+
+    height: 42px;
+
+    bottom: -11px;
+
+    border-left:
+        2px solid
+        rgba(255,255,255,0.40);
+
+    border-right:
+        2px solid
+        rgba(255,255,255,0.40);
+}
+
+
+/* ============================================================
+   LOGO CAR
+============================================================ */
+
+.logo-car {
+
+    position: relative;
+
+    z-index: 2;
+
+    font-size: 25px;
+
+    filter:
+
+        drop-shadow(
+            0 3px 3px
+            rgba(0,0,0,0.30)
+        );
+}
+
+
+/* ============================================================
+   LOGO TEXT
+============================================================ */
+
+.logo-text h4 {
+
+    margin: 0;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    letter-spacing:
+        -0.4px;
+}
+
+
+.logo-text h4 span {
+
+    color:
+        #00b7ff;
+}
+
+
+.logo-text small {
+
+    display: block;
+
+    margin-top: 1px;
+
+    font-size: 9px;
+
+    opacity: 0.50;
+}
+
+
+/* ============================================================
+   THEME BUTTON
+============================================================ */
+
+.theme-button {
+
+    width: 40px;
+
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.15);
+
+    background:
+        rgba(255,255,255,0.06);
+
+    color: inherit;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform 0.3s,
+        background 0.3s;
+}
+
+
+.theme-button:hover {
+
+    transform:
+        scale(1.08)
+        rotate(20deg);
+
+    background:
+        rgba(0,183,255,0.12);
+}
+
+
+/* ============================================================
+   REGISTER CONTAINER
+============================================================ */
+
+.register-container {
+
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+
+    height:
+        calc(100vh - 72px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        8px 20px 18px;
+}
+
+
+/* ============================================================
+   REGISTER BOX
+============================================================ */
+
+.register-box {
+
+    width: 100%;
+
+    max-width: 510px;
+
+    max-height:
+        calc(100vh - 90px);
+
+    padding:
+        25px 30px;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    border-radius: 24px;
+
+    background:
+        rgba(255,255,255,0.055);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.12);
+
+    backdrop-filter:
+        blur(24px);
+
+    -webkit-backdrop-filter:
+        blur(24px);
+
+    box-shadow:
+
+        0 25px 70px
+        rgba(0,0,0,0.32);
+}
+
+
+/* ============================================================
+   HIDE SCROLLBAR
+============================================================ */
+
+.register-box::-webkit-scrollbar {
+
+    width: 0;
+}
+
+
+/* ============================================================
+   LIGHT MODE CARD
+============================================================ */
+
+.light .register-box {
+
+    background:
+        rgba(255,255,255,0.84);
+
+    border:
+        1px solid
+        rgba(0,0,0,0.07);
+
+    box-shadow:
+
+        0 25px 70px
+        rgba(30,60,100,0.14);
+}
+
+
+/* ============================================================
+   REGISTER HEADER
+============================================================ */
+
+.register-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+}
+
+
+/* ============================================================
+   REGISTER ICON
+============================================================ */
+
+.register-icon {
+
+    width: 45px;
+
+    height: 45px;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    font-size: 18px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #00c6ff,
+            #0072ff
+        );
+
+    box-shadow:
+
+        0 8px 20px
+        rgba(0,150,255,0.25);
+}
+
+
+/* ============================================================
+   HEADER TEXT
+============================================================ */
+
+.register-header h2 {
+
+    margin: 0;
+
+    font-size: 23px;
+
+    font-weight: 800;
+}
+
+
+.register-header p {
+
+    margin:
+        3px 0 0;
+
+    font-size: 12px;
+
+    opacity: 0.50;
+}
+
+
+/* ============================================================
+   INPUT CONTAINER
+============================================================ */
+
+.input-container {
+
+    margin-bottom: 13px;
+}
+
+
+.input-container > label {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    opacity: 0.70;
+}
+
+
+/* ============================================================
+   MODERN INPUT
+============================================================ */
+
+.modern-input {
+
+    width: 100%;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        0 13px;
+
+    border-radius: 11px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.13);
+
+    background:
+        rgba(255,255,255,0.04);
+
+    transition:
+        border-color 0.25s,
+        box-shadow 0.25s,
+        transform 0.25s;
+}
+
+
+.light .modern-input {
+
+    background:
+        rgba(255,255,255,0.90);
+
+    border:
+        1px solid
+        rgba(0,0,0,0.10);
+}
+
+
+/* ============================================================
+   INPUT ICON
+============================================================ */
+
+.modern-input i {
+
+    flex-shrink: 0;
+
+    color:
+        #00b7ff;
+
+    font-size: 15px;
+
+    margin-right: 10px;
+}
+
+
+/* ============================================================
+   INPUT / SELECT
+============================================================ */
+
+.modern-input input,
+.modern-input select {
+
+    width: 100%;
+
+    height: 100%;
+
+    padding: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: inherit;
+
+    font-size: 12px;
+}
+
+
+.modern-input input::placeholder {
+
+    color: inherit;
+
+    opacity: 0.30;
+}
+
+
+/* ============================================================
+   SELECT
+============================================================ */
+
+.modern-input select {
+
+    cursor: pointer;
+}
+
+
+.dark .modern-input select option {
+
+    background:
+        #101827;
+
+    color:
+        white;
+}
+
+
+/* ============================================================
+   INPUT FOCUS
+============================================================ */
+
+.modern-input:focus-within {
+
+    border-color:
+        #00b7ff;
+
+    box-shadow:
+
+        0 0 0 2px
+        rgba(0,183,255,0.10),
+
+        0 0 20px
+        rgba(0,183,255,0.08);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* ============================================================
+   VEHICLE SECTION
+============================================================ */
+
+.vehicle-section {
+
+    margin-top: 17px;
+
+    padding-top: 16px;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,0.08);
+}
+
+
+.light .vehicle-section {
+
+    border-color:
+        rgba(0,0,0,0.08);
+}
+
+
+/* ============================================================
+   SECTION TITLE
+============================================================ */
+
+.section-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-bottom: 14px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+.section-title i {
+
+    color:
+        #00b7ff;
+}
+
+
+/* ============================================================
+   REGISTER BUTTON
+============================================================ */
+
+.register-button {
+
+    width: 100%;
+
+    height: 46px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    margin-top: 6px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #00c6ff,
+            #0072ff
+        );
+
+    box-shadow:
+
+        0 9px 24px
+        rgba(0,130,255,0.22);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s,
+        box-shadow 0.25s;
+}
+
+
+.register-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+
+        0 13px 30px
+        rgba(0,130,255,0.32);
+}
+
+
+.register-button i {
+
+    transition:
+        transform 0.25s;
+}
+
+
+.register-button:hover i {
+
+    transform:
+        translateX(4px);
+}
+
+
+/* ============================================================
+   LOGIN
+============================================================ */
+
+.login-text {
+
+    text-align: center;
+
+    margin-top: 13px;
+
+    font-size: 11px;
+
+    opacity: 0.55;
+}
+
+
+.login-text a {
+
+    margin-left: 5px;
+
+    color:
+        #00b7ff;
+
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.login-text a:hover {
+
+    text-decoration:
+        underline;
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media (max-width: 768px) {
+
+    .parking-navbar {
+
+        height: 64px;
+
+        padding:
+            0 20px;
+    }
+
+
+    .register-container {
+
+        height:
+            calc(100vh - 64px);
+
+        padding:
+            6px 15px 12px;
+    }
+
+
+    .register-box {
+
+        max-width:
+            480px;
+
+        max-height:
+            calc(100vh - 76px);
+
+        padding:
+            22px;
+    }
+
+
+    .parking-slot {
+
+        width:
+            90px;
+
+        height:
+            170px;
+    }
+
+
+    .parked-car {
+
+        font-size:
+            36px;
+    }
+
+
+    .moving-car {
+
+        font-size:
+            30px;
+    }
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 500px) {
+
+    .parking-navbar {
+
+        height:
+            58px;
+
+        padding:
+            0 15px;
+    }
+
+
+    .parking-logo {
+
+        gap:
+            8px;
+    }
+
+
+    .parking-logo-slot {
+
+        width:
+            39px;
+
+        height:
+            39px;
+
+        border-radius:
+            11px;
+    }
+
+
+    .logo-car {
+
+        font-size:
+            20px;
+    }
+
+
+    .logo-parking-line {
+
+        width:
+            28px;
+
+        height:
+            35px;
+    }
+
+
+    .logo-text h4 {
+
+        font-size:
+            16px;
+    }
+
+
+    .logo-text small {
+
+        display:
+            none;
+    }
+
+
+    .theme-button {
+
+        width:
+            36px;
+
+        height:
+            36px;
+    }
+
+
+    .register-container {
+
+        height:
+            calc(100vh - 58px);
+
+        padding:
+            5px 12px 10px;
+    }
+
+
+    .register-box {
+
+        max-width:
+            100%;
+
+        max-height:
+            calc(100vh - 68px);
+
+        padding:
+            19px 17px;
+
+        border-radius:
+            20px;
+    }
+
+
+    .register-header {
+
+        gap:
+            10px;
+
+        margin-bottom:
+            15px;
+    }
+
+
+    .register-icon {
+
+        width:
+            40px;
+
+        height:
+            40px;
+
+        font-size:
+            16px;
+    }
+
+
+    .register-header h2 {
+
+        font-size:
+            20px;
+    }
+
+
+    .register-header p {
+
+        font-size:
+            10px;
+    }
+
+
+    .input-container {
+
+        margin-bottom:
+            10px;
+    }
+
+
+    .modern-input {
+
+        height:
+            40px;
+    }
+
+
+    .vehicle-section {
+
+        margin-top:
+            12px;
+
+        padding-top:
+            12px;
+    }
+
+
+    .register-button {
+
+        height:
+            43px;
+    }
+
+
+    /* Reduce parked vehicles slightly */
+
+    .parking-slot {
+
+        opacity:
+            0.35;
+    }
+
+
+    /* Keep moving vehicles visible */
+
+    .moving-car {
+
+        font-size:
+            25px;
+
+        opacity:
+            0.15;
+    }
+}
+
+
+/* ============================================================
+   VERY SMALL HEIGHT
+============================================================ */
+
+@media (max-height: 650px) {
+
+    .parking-navbar {
+
+        height:
+            52px;
+    }
+
+
+    .parking-logo-slot {
+
+        width:
+            36px;
+
+        height:
+            36px;
+    }
+
+
+    .logo-text h4 {
+
+        font-size:
+            15px;
+    }
+
+
+    .register-container {
+
+        height:
+            calc(100vh - 52px);
+    }
+
+
+    .register-box {
+
+        max-height:
+            calc(100vh - 58px);
+
+        padding:
+            14px 17px;
+    }
+
+
+    .register-header {
+
+        margin-bottom:
+            9px;
+    }
+
+
+    .input-container {
+
+        margin-bottom:
+            7px;
+    }
+
+
+    .modern-input {
+
+        height:
+            36px;
+    }
+
+
+    .vehicle-section {
+
+        margin-top:
+            8px;
+
+        padding-top:
+            9px;
+    }
+
+
+    .register-button {
+
+        height:
+            39px;
+    }
+
+
+    .login-text {
+
+        margin-top:
+            7px;
+    }
+}
+/* ============================================================
+   REGISTER -> LOGIN TRUCK TRANSITION
+   0.00 - 0.60s : registration data enters the truck
+   0.55 - 0.95s : rear cargo door closes + locks
+   0.75 - 2.00s : truck drives left -> right with smoke
+   1.48 - 2.00s : white screen wipe reveals the next page
+============================================================ */
+
+.register-truck-transition {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    overflow: hidden;
+    pointer-events: none;
+    isolation: isolate;
+    background: transparent;
+}
+
+/* Registration scene fades while the truck takes over. */
+.register-transition-active .register-box {
+    animation: registerPanelFade 1.35s ease forwards;
+}
+
+.register-transition-active .parking-navbar,
+.register-transition-active .theme-button {
+    animation: registerSceneFade 1.20s ease forwards;
+}
+
+.register-transition-active .parking-background {
+    animation: registerBackgroundFade 1.45s ease forwards;
+}
+
+/* ---------------- DATA PACKETS ---------------- */
+.register-data-packets {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+}
+
+.data-packet {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    min-width: 145px;
+    max-width: 235px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(125, 211, 252, 0.55);
+    border-radius: 10px;
+    background: rgba(8, 15, 31, 0.94);
+    color: #e0f2fe;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35), 0 0 18px rgba(14,165,233,.20);
+    backdrop-filter: blur(9px);
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.6);
+    animation: dataToTruck .60s cubic-bezier(.22,.8,.35,1) forwards;
+}
+
+.data-packet i {
+    flex: 0 0 auto;
+    font-size: 13px;
+    color: #67e8f9;
+}
+
+.packet-name { animation-delay: .02s; }
+.packet-email { animation-delay: .10s; }
+.packet-mobile { animation-delay: .18s; }
+.packet-vehicle { animation-delay: .26s; }
+.packet-type { animation-delay: .34s; }
+
+@keyframes dataToTruck {
+    0% {
+        left: 50%;
+        top: 50%;
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(.6);
+    }
+    15% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1);
+    }
+    100% {
+        left: 27%;
+        top: 57%;
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(.15) rotate(8deg);
+    }
+}
+
+/* ---------------- TRUCK ---------------- */
+.transition-truck {
+    position: absolute;
+    left: -390px;
+    bottom: 18%;
+    width: 340px;
+    height: 155px;
+    z-index: 50;
+    will-change: left, transform;
+    filter: drop-shadow(0 18px 18px rgba(0,0,0,.52));
+    animation: truckMasterMove 2s cubic-bezier(.58,.02,.20,1) forwards;
+}
+
+.truck-cargo {
+    position: absolute;
+    left: 0;
+    bottom: 25px;
+    width: 230px;
+    height: 105px;
+    border-radius: 12px 4px 5px 12px;
+    background: linear-gradient(145deg,#0ea5e9,#2563eb 55%,#1d4ed8);
+    border: 2px solid rgba(255,255,255,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -12px 25px rgba(0,0,0,.16), 0 8px 20px rgba(0,0,0,.28);
+    overflow: visible;
+}
+
+.truck-cargo::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.truck-cargo-inside {
+    position: absolute;
+    left: 28px;
+    top: 20px;
+    width: 160px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px dashed rgba(255,255,255,.30);
+    border-radius: 8px;
+    background: rgba(3,10,25,.22);
+    color: rgba(255,255,255,.95);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: securedData .42s ease .58s forwards;
+}
+
+.cargo-data-icon {
+    font-size: 18px;
+    color: #a7f3d0;
+}
+
+.truck-parking-sign {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    color: white;
+    text-shadow: 0 2px 5px rgba(0,0,0,.35);
+    pointer-events: none;
+    animation: signDim .40s ease .60s forwards;
+}
+
+.truck-parking-sign i { font-size: 38px; line-height: 1; }
+.truck-parking-sign span { font-size: 13px; font-weight: 900; letter-spacing: 3px; }
+
+/* Actual rear door: it swings shut before the truck accelerates. */
+.truck-rear-door {
+    position: absolute;
+    left: -2px;
+    top: 7px;
+    width: 34px;
+    height: 91px;
+    z-index: 8;
+    transform-origin: left center;
+    border: 2px solid rgba(255,255,255,.32);
+    border-radius: 3px 6px 6px 3px;
+    background: linear-gradient(145deg,#075985,#1d4ed8);
+    box-shadow: inset 0 0 10px rgba(0,0,0,.22), 3px 0 7px rgba(0,0,0,.18);
+    animation: cargoDoorClose .40s cubic-bezier(.7,0,.2,1) .55s forwards;
+}
+
+.truck-rear-door::after {
+    content: "";
+    position: absolute;
+    inset: 7px 5px;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 2px;
+}
+
+.rear-door-handle {
+    position: absolute;
+    right: 4px;
+    top: 39px;
+    width: 7px;
+    height: 16px;
+    border-radius: 2px;
+    background: #d1d5db;
+    z-index: 3;
+}
+
+.rear-door-lock {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    transform: translateX(-50%) scale(0);
+    color: #bbf7d0;
+    font-size: 11px;
+    z-index: 5;
+    animation: lockDoor .25s ease .92s forwards;
+}
+
+@keyframes cargoDoorClose {
+    0% { transform: perspective(300px) rotateY(-82deg); }
+    65% { transform: perspective(300px) rotateY(7deg); }
+    100% { transform: perspective(300px) rotateY(0deg); }
+}
+
+@keyframes lockDoor {
+    to { transform: translateX(-50%) scale(1); }
+}
+
+@keyframes securedData {
+    from { opacity: 0; transform: scale(.75); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes signDim {
+    to { opacity: .30; }
+}
+
+/* ---------------- CABIN ---------------- */
+.truck-cabin {
+    position: absolute;
+    right: 0;
+    bottom: 25px;
+    width: 112px;
+    height: 80px;
+    border-radius: 5px 18px 8px 4px;
+    background: linear-gradient(145deg,#374151,#111827);
+    border: 2px solid rgba(255,255,255,.12);
+    box-shadow: inset 0 8px 15px rgba(255,255,255,.05);
+}
+
+.truck-window {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 62px;
+    height: 35px;
+    border-radius: 6px 10px 5px 5px;
+    background: linear-gradient(145deg,#dff7ff,#38bdf8 70%,#0284c7);
+    border: 2px solid rgba(255,255,255,.45);
+    box-shadow: inset 0 0 12px rgba(255,255,255,.28);
+}
+
+.truck-window::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: rgba(255,255,255,.35);
+}
+
+.truck-door-line {
+    position: absolute;
+    left: 18px;
+    top: 9px;
+    bottom: 7px;
+    width: 1px;
+    background: rgba(255,255,255,.10);
+}
+
+.truck-headlight {
+    position: absolute;
+    right: -4px;
+    bottom: 12px;
+    width: 11px;
+    height: 22px;
+    border-radius: 4px;
+    background: #fff7a8;
+    box-shadow: 0 0 7px #fff7a8, 0 0 20px rgba(255,247,168,.9), 25px 0 35px rgba(255,247,168,.18);
+}
+
+/* ---------------- WHEELS ---------------- */
+.truck-wheel {
+    position: absolute;
+    bottom: 3px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #111827;
+    border: 6px solid #4b5563;
+    box-shadow: inset 0 0 0 6px #0b0f16, 0 5px 8px rgba(0,0,0,.45);
+    animation: truckWheelSpin .20s linear infinite;
+}
+
+.truck-wheel::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 8px; height: 8px;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    background: #9ca3af;
+}
+
+.truck-wheel-one { left: 47px; }
+.truck-wheel-two { right: 30px; }
+
+/* ---------------- SMOKE ---------------- */
+.truck-smoke {
+    position: absolute;
+    left: -5px;
+    bottom: 39px;
+    width: 115px;
+    height: 95px;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.smoke-puff {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(230,238,247,.78) 0 35%, rgba(148,163,184,.42) 60%, transparent 75%);
+    filter: blur(3px);
+    opacity: 0;
+    animation: smokeRise 1.05s ease-out infinite;
+}
+
+.smoke-1 { animation-delay: .00s; }
+.smoke-2 { left: 13px; bottom: 5px; animation-delay: .16s; transform: scale(.78); }
+.smoke-3 { left: 25px; bottom: 1px; animation-delay: .31s; transform: scale(.62); }
+.smoke-4 { left: 38px; bottom: 7px; animation-delay: .45s; transform: scale(.50); }
+.smoke-5 { left: 50px; bottom: 0; animation-delay: .58s; transform: scale(.38); }
+
+@keyframes smokeRise {
+    0% { opacity: 0; transform: translate(0,0) scale(.45); }
+    18% { opacity: .72; }
+    100% { opacity: 0; transform: translate(-65px,-55px) scale(1.45); }
+}
+
+/* ---------------- ROAD / MOTION ---------------- */
+.truck-road-glow {
+    position: absolute;
+    left: -25vw;
+    bottom: 18%;
+    width: 150vw;
+    height: 110px;
+    z-index: 10;
+    background: radial-gradient(ellipse at center, rgba(14,165,233,.20), transparent 68%);
+    filter: blur(12px);
+    opacity: 0;
+    animation: roadGlow 1.35s ease .72s forwards;
+}
+
+.register-truck-transition::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: calc(18% + 34px);
+    width: 100%;
+    height: 2px;
+    z-index: 5;
+    background: repeating-linear-gradient(90deg, transparent 0 40px, rgba(255,255,255,.20) 40px 90px, transparent 90px 145px);
+    opacity: 0;
+    animation: roadLines 1.25s linear .75s forwards;
+}
+
+@keyframes roadGlow {
+    0% { opacity: 0; transform: scaleX(.5); }
+    30% { opacity: 1; }
+    100% { opacity: 0; transform: scaleX(1.1); }
+}
+
+@keyframes roadLines {
+    0% { opacity: 0; transform: translateX(0); }
+    15% { opacity: .7; }
+    100% { opacity: 0; transform: translateX(-145px); }
+}
+
+@keyframes truckMasterMove {
+    0% { left: -390px; opacity: 0; transform: translateY(0) scale(.92); }
+    8% { opacity: 1; }
+    36% { left: 13vw; transform: translateY(-2px) scale(1); }
+    47% { left: 17vw; transform: translateY(2px) scale(1.01); }
+    100% { left: calc(100vw + 390px); opacity: 1; transform: translateY(0) scale(.94); }
+}
+
+@keyframes truckWheelSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---------------- ACCOUNT STATUS ---------------- */
+.truck-status {
+    position: absolute;
+    left: 50%;
+    top: 34%;
+    transform: translate(-50%, 5px);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 999px;
+    background: rgba(15,23,42,.75);
+    color: rgba(255,255,255,.85);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: statusPulse 1.20s ease .30s forwards;
+}
+
+.truck-status i { color: #86efac; }
+
+@keyframes statusPulse {
+    0%, 20% { opacity: 0; transform: translate(-50%,8px); }
+    35%, 75% { opacity: 1; transform: translate(-50%,0); }
+    100% { opacity: 0; transform: translate(-50%,-5px); }
+}
+
+/* ---------------- CLOUD -> WHITE SCREEN -> LOGIN ---------------- */
+.login-white-wipe {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    overflow: hidden;
+    background: rgba(255,255,255,0);
+    opacity: 0;
+    transform: scale(1);
+    animation: cloudScreenBase 1.62s cubic-bezier(.22,.75,.25,1) 1.34s forwards;
+}
+
+/* Large soft cloud layer entering from the left. */
+.login-white-wipe::before {
+    content: "";
+    position: absolute;
+    left: -72%;
+    top: -18%;
+    width: 145%;
+    height: 136%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 8% 50%, rgba(255,255,255,.99) 0 13%, transparent 27%),
+        radial-gradient(circle at 22% 38%, rgba(255,255,255,.98) 0 15%, transparent 30%),
+        radial-gradient(circle at 38% 62%, rgba(255,255,255,.99) 0 18%, transparent 34%),
+        radial-gradient(circle at 52% 43%, rgba(255,255,255,.97) 0 14%, transparent 31%);
+    filter: blur(13px);
+    transform: translateX(-18%) scale(1.08);
+    opacity: 0;
+    animation: cloudSweepLeft 1.78s cubic-bezier(.18,.72,.22,1) 1.34s forwards;
+}
+
+/* Second cloud layer enters from the right, making the transition feel organic. */
+.login-white-wipe::after {
+    content: "";
+    position: absolute;
+    right: -72%;
+    top: -12%;
+    width: 145%;
+    height: 132%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 92% 48%, rgba(255,255,255,.99) 0 14%, transparent 28%),
+        radial-gradient(circle at 76% 62%, rgba(255,255,255,.98) 0 17%, transparent 32%),
+        radial-gradient(circle at 60% 37%, rgba(255,255,255,.99) 0 15%, transparent 30%),
+        radial-gradient(circle at 46% 55%, rgba(255,255,255,.97) 0 13%, transparent 28%);
+    filter: blur(15px);
+    transform: translateX(18%) scale(1.08);
+    opacity: 0;
+    animation: cloudSweepRight 1.82s cubic-bezier(.18,.72,.22,1) 1.40s forwards;
+}
+
+@keyframes cloudSweepLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-20%) scale(1.08);
+    }
+    20% { opacity: .92; }
+    58% {
+        opacity: 1;
+        transform: translateX(18%) scale(1.12);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(58%) scale(1.18);
+    }
+}
+
+@keyframes cloudSweepRight {
+    0% {
+        opacity: 0;
+        transform: translateX(20%) scale(1.08);
+    }
+    22% { opacity: .88; }
+    62% {
+        opacity: 1;
+        transform: translateX(-18%) scale(1.12);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-58%) scale(1.18);
+    }
+}
+
+/* The cloud layer becomes a completely white screen at the end. */
+@keyframes cloudScreenBase {
+    0% {
+        opacity: 0;
+        background: rgba(255,255,255,0);
+    }
+    35% {
+        opacity: .35;
+        background: rgba(255,255,255,.12);
+    }
+    70% {
+        opacity: .78;
+        background: rgba(255,255,255,.62);
+    }
+    100% {
+        opacity: 1;
+        background: #ffffff;
+    }
+}
+
+/* Page elements disappear underneath the white wipe. */
+@keyframes registerPanelFade {
+    0% { opacity: 1; transform: scale(1); }
+    55% { opacity: 1; transform: scale(.995); }
+    100% { opacity: 0; transform: scale(.97); }
+}
+
+@keyframes registerSceneFade {
+    0% { opacity: 1; }
+    100% { opacity: .10; }
+}
+
+@keyframes registerBackgroundFade {
+    0% { opacity: 1; filter: brightness(1); }
+    100% { opacity: .30; filter: brightness(.72); }
+}
+
+.register-transition-active .register-button {
+    pointer-events: none;
+    cursor: wait;
+}
+
+/* ---------------- MOBILE ---------------- */
+@media (max-width: 768px) {
+    .transition-truck {
+        width: 285px;
+        height: 138px;
+        bottom: 17%;
+    }
+
+    .truck-cargo {
+        width: 190px;
+        height: 88px;
+        bottom: 23px;
+    }
+
+    .truck-cargo-inside {
+        left: 23px;
+        top: 16px;
+        width: 130px;
+        height: 52px;
+    }
+
+    .truck-cabin {
+        width: 94px;
+        height: 70px;
+        bottom: 23px;
+    }
+
+    .truck-window {
+        width: 50px;
+        height: 29px;
+    }
+
+    .truck-rear-door {
+        width: 29px;
+        height: 76px;
+    }
+
+    .truck-parking-sign { display: none; }
+    .truck-wheel { width: 41px; height: 41px; border-width: 5px; }
+    .truck-wheel-one { left: 36px; }
+    .truck-wheel-two { right: 25px; }
+
+    .data-packet {
+        min-width: 110px;
+        max-width: 165px;
+        padding: 7px 9px;
+        font-size: 9px;
+    }
+
+    @keyframes dataToTruck {
+        0% { left: 50%; top: 50%; opacity: 0; transform: translate(-50%,-50%) scale(.6); }
+        15% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+        100% { left: 17vw; top: 53%; opacity: 0; transform: translate(-50%,-50%) scale(.15); }
+    }
+
+    @keyframes truckMasterMove {
+        0% { left: -330px; opacity: 0; transform: scale(.90); }
+        8% { opacity: 1; }
+        36% { left: 10vw; transform: scale(1); }
+        47% { left: 14vw; }
+        100% { left: calc(100vw + 330px); opacity: 1; transform: scale(.88); }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .transition-truck,
+    .truck-wheel,
+    .data-packet,
+    .smoke-puff,
+    .login-white-wipe,
+    .truck-rear-door,
+    .truck-status,
+    .truck-road-glow {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* ================= REGISTER VALIDATION SUMMARY ================= */
+.register-error-message {
+    margin-top: 15px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    background: rgba(220, 53, 69, 0.12);
+    border: 1px solid rgba(220, 53, 69, 0.4);
+    color: #dc3545;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.register-error-message > i {
+    font-size: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.register-error-message strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.register-error-message ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.register-error-message li {
+    margin-bottom: 3px;
+}
+
+/* ================= FIELD LEVEL ERRORS & CONTROLS ================= */
+.modern-input.input-error {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.08) !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.20) !important;
+}
+
+.field-error-text {
+    font-size: 11px;
+    color: #ef4444;
+    margin-top: 5px;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+}
+
+.password-toggle-btn {
+    background: transparent;
+    border: none;
+    color: inherit;
+    opacity: 0.60;
+    cursor: pointer;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.password-toggle-btn:hover {
+    opacity: 1;
+    color: #00b7ff;
+}
+
+.login-link-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-left: 6px;
+    color: #00b7ff;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.login-link-btn:hover {
+    text-decoration: underline;
+}
+
+/* Light mode parking slots & floor contrast */
+.light .parking-slot {
+    border-left-color: rgba(0, 0, 0, 0.12);
+    border-right-color: rgba(0, 0, 0, 0.12);
+}
+
+.light .parking-slot::before {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.light .parking-slot span {
+    color: rgba(0, 0, 0, 0.35);
+}
+
+.light .parking-floor {
+    border-top-color: rgba(0, 0, 0, 0.10);
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 125px,
+            rgba(0,0,0,0.035) 126px,
+            rgba(0,0,0,0.035) 128px
+        ),
+        linear-gradient(
+            rgba(0,0,0,0.015),
+            rgba(0,0,0,0.045)
+        );
+}
