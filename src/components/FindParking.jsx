@@ -19,6 +19,7 @@ import "./FindParking.css";
 
 const API_BASE_URL = "http://localhost:8080";
 const PARKING_SLOTS_URL = `${API_BASE_URL}/api/parking-slots`;
+const MY_VEHICLES_URL = `${API_BASE_URL}/api/vehicles/by-mobile`;
 const BOOKING_URL = `${API_BASE_URL}/BookingSlotData`;
 
 function getLoggedInUser() {
@@ -83,17 +84,10 @@ export default function FindParking({
 }) {
   const loggedInUser = useMemo(() => getLoggedInUser(), []);
 
-  const vehicles = useMemo(() => {
-    const userVehicles = Array.isArray(loggedInUser.vehicles)
-      ? loggedInUser.vehicles
-      : [];
-
-    return userVehicles.filter(
-      (vehicle) =>
-        vehicle?.vehicleNumber ||
-        vehicle?.vehicle_number
-    );
-  }, [loggedInUser]);
+  // Load this account's vehicles from the backend, not only from login-session
+  // data (which can be stale after adding another vehicle).
+  const [vehicles, setVehicles] = useState([]);
+  const [vehiclesLoading, setVehiclesLoading] = useState(true);
 
   const [parkSlots, setParkSlots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,14 +103,109 @@ export default function FindParking({
     loggedInUser.mobile ?? loggedInUser.mobileNumber ?? ""
   ).trim();
 
-  const [vehicleNumber, setVehicleNumber] = useState(() =>
-    normalizeVehicleNumber(
-      vehicles[0]?.vehicleNumber ??
-        vehicles[0]?.vehicle_number ??
-        loggedInUser.vehicleNumber ??
-        ""
-    )
-  );
+  const [vehicleNumber, setVehicleNumber] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchMyVehicles() {
+      setVehiclesLoading(true);
+
+      if (!accountMobileNumber) {
+        setVehicles([]);
+        setVehiclesLoading(false);
+        console.error("[ParkSmart] LOGGED_IN_USER_MOBILE_MISSING");
+        return;
+      }
+
+      try {
+        const url = new URL(MY_VEHICLES_URL);
+        url.searchParams.set("mobileNumber", accountMobileNumber);
+
+        console.log("[ParkSmart] FETCH_MY_VEHICLES_REQUEST", {
+          endpoint: url.pathname,
+          mobileNumber: accountMobileNumber,
+        });
+
+        const response = await fetch(url.toString(), {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+        });
+
+        const responseText = await response.text();
+        let data = [];
+        if (responseText) {
+          try {
+            data = JSON.parse(responseText);
+          } catch {
+            throw new Error("The vehicles API returned invalid JSON.");
+          }
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data?.message || `Unable to retrieve vehicles (HTTP ${response.status}).`
+          );
+        }
+
+        if (!Array.isArray(data)) {
+          throw new Error("The vehicles API must return a JSON array.");
+        }
+
+        const normalizedVehicles = data
+          .map((vehicle) => {
+            const number = normalizeVehicleNumber(
+              vehicle.vehicleNumber ??
+              vehicle.vehicle_number ??
+              vehicle.number
+            );
+            const type = String(
+              vehicle.vehicleType ??
+              vehicle.vehicle_type ??
+              vehicle.type ??
+              "CAR"
+            ).trim().toUpperCase();
+
+            return {
+              vehicleId: vehicle.vehicleId ?? vehicle.vehicle_id ?? vehicle.id,
+              vehicleNumber: number,
+              vehicleType: type,
+              // Aliases keep the existing booking UI compatible.
+              vehicle_number: number,
+              vehicle_type: type,
+            };
+          })
+          .filter((vehicle) => vehicle.vehicleNumber);
+
+        setVehicles(normalizedVehicles);
+        setVehicleNumber((current) => {
+          const stillRegistered = normalizedVehicles.some(
+            (vehicle) => vehicle.vehicleNumber === current
+          );
+          return stillRegistered
+            ? current
+            : (normalizedVehicles[0]?.vehicleNumber ?? "");
+        });
+
+        console.log("[ParkSmart] FETCH_MY_VEHICLES_SUCCESS", {
+          totalVehicles: normalizedVehicles.length,
+          vehicles: normalizedVehicles,
+        });
+      } catch (fetchError) {
+        if (fetchError.name !== "AbortError") {
+          console.error("[ParkSmart] FETCH_MY_VEHICLES_FAILED:", fetchError);
+          setError(fetchError.message || "Unable to retrieve your vehicles.");
+          setVehicles([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) setVehiclesLoading(false);
+      }
+    }
+
+    fetchMyVehicles();
+    return () => controller.abort();
+  }, [accountMobileNumber]);
 
   const [now, setNow] = useState(() => new Date());
   const [bookingMode, setBookingMode] = useState("CUSTOM");
@@ -254,7 +343,7 @@ export default function FindParking({
 
   function getVehicleType(vehicle) {
     return String(
-      vehicle?.vehicleType ?? vehicle?.vehicle_type ?? ""
+      vehicle?.vehicleType ?? vehicle?.vehicle_type ?? vehicle?.type ?? ""
     ).toUpperCase();
   }
 
@@ -677,7 +766,9 @@ export default function FindParking({
                   disabled={!vehicles.length}
                   required
                 >
-                  {vehicles.length ? (
+                  {vehiclesLoading ? (
+                    <option value="">Loading your vehicles…</option>
+                  ) : vehicles.length ? (
                     vehicles.map((vehicle) => {
                       const number = normalizeVehicleNumber(
                         vehicle.vehicleNumber ?? vehicle.vehicle_number
@@ -788,6 +879,7 @@ export default function FindParking({
                 onClick={handleBooking}
                 disabled={
                   bookingLoading ||
+                  vehiclesLoading ||
                   !vehicles.length ||
                   !vehicleIsRegistered ||
                   selectedVehicleAlreadyParked
